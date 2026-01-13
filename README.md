@@ -1,76 +1,43 @@
-from fastapi import FastAPI, HTTPException
-import logging
-import time
+##  DevOps_Project-Todo_List_API
+This project is a simple Todo List REST API built to practice DevOps concepts end to end. It demonstrates CI/CD automation, Docker containerization, security scanning, observability, and Kubernetes deployment.
 
-# Create FastAPI application instance
-app = FastAPI()
+## Features:
+- **API REST** : Task management (CRUD) using FastAPI
 
-# Logging Configuration 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("todo-api")
+- **CI/CD** : Task management (CRUD) using FastAPI
 
+- **Containerisation** : Dockerized application
 
-tasks = []
-request_count = 0  
+- **Observability** : /metrics endpoint and logging
 
-# Middleware for Logging and Metrics
-@app.middleware("http")
-async def log_requests(request, call_next):
-    """
-    Middleware that:
-    - Counts incoming HTTP requests (metrics)
-    - Measures request processing time
-    - Logs request path and response duration
-    """
-    global request_count
-    request_count += 1
-    start_time = time.time()
-    
-    response = await call_next(request)
-    
-    duration = time.time() - start_time
-    logger.info(f"Path: {request.url.path} | Duration: {duration:.4f}s")
-    
-    return response
+- **Orchstration** :Kubernetes deployment
 
-# API Endpoints 
-@app.get("/tasks")
-def get_tasks():
-    """
-    Retrieve all tasks
-    """
-    return tasks
+## Installation
+pip install -r requirements.txt
 
-@app.post("/tasks")
-def create_task(task: dict):
-    """
-    Create a new task
-    Each task must contain a 'title'
-    """
-    if "title" not in task:
-        raise HTTPException(status_code=400, detail="Title missing")
-    
-    task["id"] = len(tasks) + 1
-    tasks.append(task)
-    return task
+## Lancement
+python -m uvicorn app:app --reload
 
-# Observability Endpoint 
-@app.get("/metrics")
-def metrics():
-    """
-    Expose simple application metrics:
-    - total_requests: number of received HTTP requests
-    - active_tasks: number of tasks currently stored
-    """
-    return {
-        "total_requests": request_count,
-        "active_tasks": len(tasks)
-    }
+## Access the endpoints
+- **List Tasks**: http://127.0.0.1:8000/tasks
+- **Create task**: POST JSON to http://127.0.0.1:8000/tasks
+- **Metrics** : http://127.0.0.1:8000/metrics 
+- **Health check** : http://127.0.0.1:8000/health
+## Docker
+ ## Build the image
+   docker build -t todo-api:v1
 
-# Health Check Endpoint 
-@app.get("/health")
-def health():
-    """
-    Health check endpoint used by Kubernetes liveness probe
-    """
-    return {"status": "healthy"}
+ ## Run the container
+docker run -d -p 8080:8000 --name todo-api:v1
+ ## docker-compose
+ docker-compose up
+ ## Check logs
+ docker logs todo-api
+
+## kubernetes
+ ## Apply the manifests
+ kubectl apply -f deployement.yaml 
+ kubectl apply -f service.yaml
+
+ ## Access the API
+ kubectl port-forward service/todo-api-service 8000:8000
