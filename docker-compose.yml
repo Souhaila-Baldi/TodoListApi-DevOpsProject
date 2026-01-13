@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  todo-api:
+    image: devops-todo-api:v1
+    container_name: todo-api
+    ports:
+      - "8080:8000"   # host:container
+    restart: unless-stopped
