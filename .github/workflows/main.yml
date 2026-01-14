@@ -9,7 +9,11 @@ on:
   pull_request:
     branches:
       - main
-
+permissions:
+  contents: read
+  issues: write
+  checks: write
+  
 jobs:
   build-test-sast:
     name: Build, Test & SAST
