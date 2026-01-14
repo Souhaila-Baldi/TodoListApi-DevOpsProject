@@ -24,7 +24,6 @@ jobs:
           python-version: '3.9'
 
 
-      # SÉCURITÉ (SAST) - Basé sur Cours 1, p.8
       - name: Run Bandit (Security Scan)
         run: |
           pip install bandit
